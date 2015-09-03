@@ -1,22 +1,18 @@
 public class Solution {
     public boolean isMatch(String s, String p) {
-        return _isMatch(s, 0, p, 0);
-    }
-
-    private boolean _isMatch(String s, int sPos, String p, int pPos) {
-        if (sPos >= s.length() || pPos >= p.length()) {
-            if (sPos >= s.length() && pPos >= p.length()) return true;
-            if (sPos >= s.length() && pPos < p.length() - 1 && p.charAt(pPos + 1) == '*')
-                return _isMatch(s, sPos, p, pPos + 2);
-            return false;
+        if(p == null || p.isEmpty())
+            return (s == null || s.isEmpty());
+        // Normal match
+        if(p.length() == 1 || p.charAt(1) != '*'){
+            if((s== null || s.isEmpty()) || (p.charAt(0) != '.' && p.charAt(0) != s.charAt(0)))
+                return false;
+            return isMatch(s.substring(1), p.substring(1));
         }
-        if (s.charAt(sPos) != p.charAt(pPos) && p.charAt(pPos) != '.') {
-            //no *, match failed
-            if (pPos < p.length() - 1 && p.charAt(pPos + 1) == '*')
-                return _isMatch(s, sPos, p, pPos + 2);
-            return false;
+        // Match with '*'
+        while(!(s == null || s.isEmpty()) && (s.charAt(0) == p.charAt(0)|| p.charAt(0) == '.')){
+            if(isMatch(s, p.substring(2))) return true;// '*' plays 0 when equal
+            s = s.substring(1);// '*' plays > 0
         }
-        if (pPos == p.length() - 1 || p.charAt(pPos + 1) != '*') return _isMatch(s, sPos + 1, p, pPos + 1);
-        return _isMatch(s, sPos + 1, p, pPos) || _isMatch(s, sPos, p, pPos + 2);
+        return isMatch(s, p.substring(2)); // *plays 0 when inequal.
     }
 }
